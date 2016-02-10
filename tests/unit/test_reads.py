@@ -169,3 +169,120 @@ class TestSamCigar(unittest.TestCase):
 
         self.assertEqual(protocol.CigarOperation.SEQUENCE_MISMATCH,
                          reads.SamCigar.int2ga(8))
+
+
+class TestSamFlags(unittest.TestCase):
+    """
+    Tests SamFlags utilities for checking the status of and
+    setting flags.
+
+    Flags are defined by the SAM spec.
+    """
+
+    def setUp(self):
+        self.flag = 0x0
+
+    def testPairedReadFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_PAIRED)
+        self.assertEqual(0x1, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_PAIRED))
+
+    def testProperPairReadFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_PROPER_PAIR)
+        self.assertEqual(0x2, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_PROPER_PAIR))
+
+    def testUnmappedReadFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_UNMAPPED)
+        self.assertEqual(0x4, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_UNMAPPED))
+
+    def testUnmappedMateFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.MATE_UNMAPPED)
+        self.assertEqual(0x8, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.MATE_UNMAPPED))
+
+    def testReverseStrandReadFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_REVERSE_STRAND)
+        self.assertEqual(0x10, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_REVERSE_STRAND))
+
+    def testReverseStrandMateFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.MATE_REVERSE_STRAND)
+        self.assertEqual(0x20, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.MATE_REVERSE_STRAND))
+
+    def testFirstPairFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.FIRST_IN_PAIR)
+        self.assertEqual(0x40, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.FIRST_IN_PAIR))
+
+    def testSecondPairFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.SECOND_IN_PAIR)
+        self.assertEqual(0x80, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.SECOND_IN_PAIR))
+
+    def testSecondaryAlignmentFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.SECONDARY_ALIGNMENT)
+        self.assertEqual(0x100, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.SECONDARY_ALIGNMENT))
+
+    def testFailedQualityCheckFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.FAILED_QUALITY_CHECK)
+        self.assertEqual(0x200, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.FAILED_QUALITY_CHECK))
+
+    def testDuplicateReadFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.DUPLICATE_READ)
+        self.assertEqual(0x400, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.DUPLICATE_READ))
+
+    def testSupplementaryAlignmentFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.SUPPLEMENTARY_ALIGNMENT)
+        self.assertEqual(0x800, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.SUPPLEMENTARY_ALIGNMENT))
+
+    def testFlagNotSet(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_PAIRED)
+        self.assertFalse(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_REVERSE_STRAND))
+
+    def testComboFlag(self):
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.READ_PAIRED)
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.FIRST_IN_PAIR)
+        self.flag = reads.SamFlags.setFlag(
+            self.flag, reads.SamFlags.FAILED_QUALITY_CHECK)
+        self.assertEqual(0x241, self.flag)
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.READ_PAIRED))
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.FIRST_IN_PAIR))
+        self.assertTrue(reads.SamFlags.isFlagSet(
+            self.flag, reads.SamFlags.FAILED_QUALITY_CHECK))
