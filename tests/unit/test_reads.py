@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import unittest
 
 import ga4gh.datamodel.reads as reads
+import ga4gh.protocol as protocol
 
 
 class TestParseMalformedBamHeader(unittest.TestCase):
@@ -96,3 +97,75 @@ class TestParseMalformedBamHeader(unittest.TestCase):
                 for idx, item in enumerate(v):
                     self.assertEqual(expected[k][idx],
                                      reads.parseMalformedBamHeader(item))
+
+
+class TestSamCigar(unittest.TestCase):
+    """
+    Test Sam Cigar class handles Cigar mappings correctly
+
+    The integer codes are defined in the SAM spec. Thus, the ordering of
+    SamCigar.cigarStrings implicitly implements this spec.
+    """
+
+    def testAlignmentMatch(self):
+        self.assertEqual(0, reads.SamCigar.ga2int(
+            protocol.CigarOperation.ALIGNMENT_MATCH))
+
+        self.assertEqual(protocol.CigarOperation.ALIGNMENT_MATCH,
+                         reads.SamCigar.int2ga(0))
+
+    def testInsertion(self):
+        self.assertEqual(1, reads.SamCigar.ga2int(
+            protocol.CigarOperation.INSERT))
+
+        self.assertEqual(protocol.CigarOperation.INSERT,
+                         reads.SamCigar.int2ga(1))
+
+    def testDeletion(self):
+        self.assertEqual(2, reads.SamCigar.ga2int(
+            protocol.CigarOperation.DELETE))
+
+        self.assertEqual(protocol.CigarOperation.DELETE,
+                         reads.SamCigar.int2ga(2))
+
+    def testSkipped(self):
+        self.assertEqual(3, reads.SamCigar.ga2int(
+            protocol.CigarOperation.SKIP))
+
+        self.assertEqual(protocol.CigarOperation.SKIP,
+                         reads.SamCigar.int2ga(3))
+
+    def testSoftClipping(self):
+        self.assertEqual(4, reads.SamCigar.ga2int(
+            protocol.CigarOperation.CLIP_SOFT))
+
+        self.assertEqual(protocol.CigarOperation.CLIP_SOFT,
+                         reads.SamCigar.int2ga(4))
+
+    def testHardClipping(self):
+        self.assertEqual(5, reads.SamCigar.ga2int(
+            protocol.CigarOperation.CLIP_HARD))
+
+        self.assertEqual(protocol.CigarOperation.CLIP_HARD,
+                         reads.SamCigar.int2ga(5))
+
+    def testPadding(self):
+        self.assertEqual(6, reads.SamCigar.ga2int(
+            protocol.CigarOperation.PAD))
+
+        self.assertEqual(protocol.CigarOperation.PAD,
+                         reads.SamCigar.int2ga(6))
+
+    def testSequenceMatch(self):
+        self.assertEqual(7, reads.SamCigar.ga2int(
+            protocol.CigarOperation.SEQUENCE_MATCH))
+
+        self.assertEqual(protocol.CigarOperation.SEQUENCE_MATCH,
+                         reads.SamCigar.int2ga(7))
+
+    def testSequenceMismatch(self):
+        self.assertEqual(8, reads.SamCigar.ga2int(
+            protocol.CigarOperation.SEQUENCE_MISMATCH))
+
+        self.assertEqual(protocol.CigarOperation.SEQUENCE_MISMATCH,
+                         reads.SamCigar.int2ga(8))
