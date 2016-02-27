@@ -176,7 +176,7 @@ class FileSystemDataset(AbstractDataset):
         # Reads
         readGroupSetDir = os.path.join(dataDir, self.readsDirName)
         for filename in os.listdir(readGroupSetDir):
-            if fnmatch.fnmatch(filename, '*.bam'):
+            if fnmatch.fnmatch(filename, '*.bam') or fnmatch.fnmatch(filename, '*.cram'):
                 localId, _ = os.path.splitext(filename)
                 bamPath = os.path.join(readGroupSetDir, filename)
                 readGroupSet = reads.HtslibReadGroupSet(

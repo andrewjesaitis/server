@@ -255,7 +255,10 @@ class HtslibReadGroupSet(datamodel.PysamDatamodelMixin, AbstractReadGroupSet):
         self._programs = programs
 
     def openFile(self, dataFile):
-        return pysam.AlignmentFile(dataFile)
+        if dataFile.endswith(".cram"):
+            return pysam.AlignmentFile(dataFile, 'rc')
+        else:
+            return pysam.AlignmentFile(dataFile)
 
     def getSamFilePath(self):
         """
